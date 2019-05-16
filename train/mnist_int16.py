@@ -66,7 +66,7 @@ with tf.name_scope('Loss'):
 	cross_entropy = -tf.reduce_sum(y_*tf.log(y_conv))
 
 with tf.name_scope('Train'):
-	train_step = tf.train.AdamOptimizer(1e-3).minimize(cross_entropy)
+	train_step = tf.train.AdamOptimizer(5e-4).minimize(cross_entropy)
 	#train_step = tf.train.AdamOptimizer(5e-5).minimize(cross_entropy)
 
 with tf.name_scope('Accuracy'):
@@ -78,7 +78,7 @@ with tf.name_scope('Accuracy'):
 
 tf.initialize_all_variables().run()
 
-for i in range(2000):#000):
+for i in range(10000):#000):
 	batch = mnist.train.next_batch(200);
 	if i%200 == 0:
 		train_accuracy = accuracy.eval(feed_dict={x:batch[0], y_: batch[1], keep_prob:1.0});
@@ -88,6 +88,9 @@ for i in range(2000):#000):
 print("test accuracy %g"%accuracy.eval(feed_dict={x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
 
 f_cfg = open('./record/MNIST_LARGE_cfg.h', 'w')
+f_cfg.write("#ifndef __MNIST_LARGE_CFG__\n");
+f_cfg.write("#define __MNIST_LARGE_CFG__\n\n");
+
 Record_Conv_Cfg(28,28,1,32,5,5,1,1,2,2,2,2,"conv1",f_cfg);
 Record_Conv_Cfg(14,14,32,64,5,5,1,1,2,2,2,2,"conv2",f_cfg);
 Record_Conv_Cfg(7,7,64,1024,7,7,1,1,0,0,0,0,"fc1",f_cfg);
@@ -114,6 +117,8 @@ Get_Feature_Fraction_Part(h_fc1,"h_fc1",{x: mnist.test.images, y_: mnist.test.la
 Record_Weight(tf.reshape(W_fc2,[1,1,1024,10]),"W_fc2",f_cfg)
 Record_Bias(b_fc2,"b_fc2",f_cfg)
 Get_Feature_Fraction_Part(h_fc2,"h_fc2",{x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0},f_cfg)		
+
+f_cfg.write("\n#endif\n");
 f_cfg.close();
 
 sess.close()
