@@ -12,4 +12,11 @@ Before the inference phase, we first need a ZCU104 board with a DDR4 bar install
 First, copy this database under any folder into ZCU104 filesystem, then execute the load_bitfile.py under <inference> to download the bitfile.
   
 There are several DEMOS provided in <my_code> folder: Malloc, CONV, POOL, ELEMENTWISE, NONLINEAR, MNIST_LARGE, VGG16.
-The first 5 DEMOS do not need datasets, so you can compile them with 'make [DEMONAME]', like make POOL. After the executable is generated, you can execute it.
+The first 5 DEMOS do not need pre-trained weights and datasets, so you can compile them with 'make [DEMONAME]', like make POOL. After the executable is generated, you can execute it.
+
+The DEMOS MNIST_LARGE and VGG16 need pre-trained weights and datasets, you need to download them.
+Pre-trained weights of MNIST_LARGE: 链接：https://pan.baidu.com/s/1WzQhSUXlS8oT42aVDaHEbw 提取码：5zwz 
+Pre-trained weights of VGG16: 链接：https://pan.baidu.com/s/1l06nfVMn3UHtquIG0L4DRw 提取码：b0jf 
+Then extracting these files into <my_code> folder.
+
+
