@@ -15,8 +15,11 @@ There are several DEMOS provided in <my_code> folder: Malloc, CONV, POOL, ELEMEN
 The first 5 DEMOS do not need pre-trained weights and datasets, so you can compile them with 'make [DEMONAME]', like make POOL. After the executable is generated, you can execute it.
 
 The DEMOS MNIST_LARGE and VGG16 need pre-trained weights and datasets, you need to download them.
+
 Pre-trained weights of MNIST_LARGE: 链接：https://pan.baidu.com/s/1WzQhSUXlS8oT42aVDaHEbw 提取码：5zwz 
+
 Pre-trained weights of VGG16: 链接：https://pan.baidu.com/s/1l06nfVMn3UHtquIG0L4DRw 提取码：b0jf 
+
 Then extracting these files into <my_code> folder.
 
 
