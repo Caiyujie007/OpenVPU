@@ -16,8 +16,8 @@ The first 5 DEMOS do not need pre-trained weights and datasets, so you can compi
 
 The DEMOS MNIST_LARGE and VGG16 need pre-trained weights and datasets, you need to download them, then extracting these files into <my_code> folder.
 
-Pre-trained weights of MNIST_LARGE: 链接：https://pan.baidu.com/s/1WzQhSUXlS8oT42aVDaHEbw 提取码：5zwz 
+The link of pre-trained weights of MNIST_LARGE is https://pan.baidu.com/s/1WzQhSUXlS8oT42aVDaHEbw 提取码：5zwz 
 
-Pre-trained weights of VGG16: 链接：https://pan.baidu.com/s/1l06nfVMn3UHtquIG0L4DRw 提取码：b0jf 
+The link of pre-trained weights of VGG16 is https://pan.baidu.com/s/1l06nfVMn3UHtquIG0L4DRw 提取码：b0jf 
 
 The datasets of DEMO MNIST_LARGE and VGG16 are also needed to download, link is:. We need to extract it into to the root folder of ZCU104, as /dat/ILSVR2012 and /dat/MNIST. There is a python script(/dat/ILSVR2012/dataset_valid_bin/JPG2bin.py) to translate any size JPEG pictures into 224x224x3 for VGG16 network, the translated picture has a suffix as '.bin'. The VGG16 demo will read in the .bin pictures according to the /dat/ILSVR2012/dataset_valid_bin/filelist, and run the inference.
