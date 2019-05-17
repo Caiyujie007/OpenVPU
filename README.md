@@ -20,6 +20,7 @@ The link of pre-trained weights of MNIST_LARGE is https://pan.baidu.com/s/1WzQhS
 
 The link of pre-trained weights of VGG16 is https://pan.baidu.com/s/1l06nfVMn3UHtquIG0L4DRw 提取码：b0jf 
 
-The datasets of DEMO MNIST_LARGE and VGG16 are also needed to download, link is:. We need to extract it into to the root folder of ZCU104, as /dat/ILSVR2012 and /dat/MNIST.
+The datasets of DEMO MNIST_LARGE and VGG16 are also needed to download, link is https://pan.baidu.com/s/1ehIBh0i87-rFo4MBhYjXfg 
+提取码：kph9. We need to extract it into to the root folder of ZCU104, as /dat/ILSVR2012 and /dat/MNIST.
 
 There is a python script (/dat/ILSVR2012/dataset_valid_bin/JPG2bin.py) to translate any size JPEG pictures into 224x224x3 for VGG16 network, the translated picture has a suffix as '.bin'. The VGG16 demo will read in the .bin pictures according to the /dat/ILSVR2012/dataset_valid_bin/filelist, and run the inference.
