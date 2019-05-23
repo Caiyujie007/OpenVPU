@@ -14,10 +14,10 @@ Logic_MEM_NUM=16
 BIT_WIDTH=16;
 
 def Get_FeatureLength(H,W,CH):
-	return (Tk*H*W*((CH+Tk-1)/Tk))
+	return (Tk*H*W*math.floor((CH+Tk-1)/Tk))
 
 def Get_WeightLength(Ky,Kx,CHin,CHout):
-	return (Tc*Kx*Ky*CHout*((CHin+Tc-1)/Tc))
+	return (Tc*Kx*Ky*CHout*math.floor((CHin+Tc-1)/Tc))
 
 def To_Fixed(tensor,bitwidth):
 	array=tensor.eval();
@@ -97,36 +97,36 @@ def Record_Bias(tensor,name,file):
 
 def Record_Conv_Cfg(Hin,Win,CHin,CHout,Kx,Ky,Sx,Sy,pad_left,pad_right,pad_up,pad_down,layername,file):
 	mininum_bw=0;
-	out_width=((Win+pad_left+pad_right-Kx)/Sx+1);
-	out_height=((Hin+pad_up+pad_down-Ky)/Sy+1);
+	out_width=(math.floor((Win+pad_left+pad_right-Kx)/Sx)+1);
+	out_height=(math.floor((Hin+pad_up+pad_down-Ky)/Sy)+1);
 	overlap=Ky-Sy;
-	entries_per_line=Win*((CHin+Tc-1)/Tc);
+	entries_per_line=Win*math.floor((CHin+Tc-1)/Tc);
 
-	dat_banks_restrict=(entries_per_line*Ky+Logic_MEM_DEP-1)/Logic_MEM_DEP;
-	wt_banks_restrict=(Kx*Ky*Tk*((CHin+Tc-1)/Tc)+Logic_MEM_DEP-1)/Logic_MEM_DEP;
+	dat_banks_restrict=math.floor((entries_per_line*Ky+Logic_MEM_DEP-1)/Logic_MEM_DEP);
+	wt_banks_restrict=math.floor((Kx*Ky*Tk*math.floor((CHin+Tc-1)/Tc)+Logic_MEM_DEP-1)/Logic_MEM_DEP);
 	if((dat_banks_restrict+wt_banks_restrict)>Logic_MEM_NUM):
 		printf("Error: CBUF entries not enough, you should split your "+layername+" into at least "+str((dat_banks_restrict+wt_banks_restrict)/Logic_MEM_NUM)+" pieces!!!\n");
 		return 
 
-	for dat_buf_num in range(dat_banks_restrict,Logic_MEM_NUM-wt_banks_restrict):
+	for dat_buf_num in range(int(dat_banks_restrict),int(Logic_MEM_NUM-wt_banks_restrict)):
 		wt_banks=Logic_MEM_NUM-dat_buf_num;
-		out_ch_slice=( (Logic_MEM_DEP*wt_banks)/(Kx*Ky*Tk*((CHin+Tc-1)/Tc)) ) *Tk;
+		out_ch_slice=math.floor( (Logic_MEM_DEP*wt_banks)/(Kx*Ky*Tk*math.floor((CHin+Tc-1)/Tc)) ) *Tk;
 
 		if(out_ch_slice>=CHout):
 			out_ch_slice=CHout;
 			N=1;
 		else:
-			N=(CHout+out_ch_slice-1)/out_ch_slice;
+			N=math.floor((CHout+out_ch_slice-1)/out_ch_slice);
 
 		if(CHout%out_ch_slice==0):
 			out_ch_slice_last=out_ch_slice;
 		else:
 			out_ch_slice_last=CHout%out_ch_slice;
 
-		out_height_first=((Logic_MEM_DEP*dat_buf_num)/entries_per_line+pad_up-Ky)/Sy+1;
+		out_height_first=math.floor((math.floor((Logic_MEM_DEP*dat_buf_num)/entries_per_line)+pad_up-Ky)/Sy)+1;
 		in_height_first=(out_height_first-1)*Sy+Ky-pad_up;
 
-		out_height_middle=((Logic_MEM_DEP*dat_buf_num)/entries_per_line-Ky)/Sy+1;
+		out_height_middle=math.floor((math.floor((Logic_MEM_DEP*dat_buf_num)/entries_per_line)-Ky)/Sy)+1;
 		in_height_middle=(out_height_middle-1)*Sy+Ky;
 
 		if(out_height_first>=out_height):
@@ -134,16 +134,16 @@ def Record_Conv_Cfg(Hin,Win,CHin,CHout,Kx,Ky,Sx,Sy,pad_left,pad_right,pad_up,pad
 			in_height_first=Hin;
 
 		if((out_height-out_height_first)%out_height_middle == 0):
-			K=(out_height-out_height_first)/out_height_middle+1;
+			K=math.floor((out_height-out_height_first)/out_height_middle)+1;
 			out_height_last=out_height_middle;
 		else:
-			K=(out_height-out_height_first)/out_height_middle+2;
+			K=math.floor((out_height-out_height_first)/out_height_middle)+2;
 			out_height_last=(out_height-out_height_first)%out_height_middle;
 
 		in_height_last=Hin-in_height_first+overlap-(K-2)*(in_height_first-overlap);
 
-		total_bw_K_to_N=(entries_per_line*Hin+entries_per_line*overlap*(K-1))*N+Kx*Ky*CHout*((CHin+Tc-1)/Tc);
-		total_bw_N_to_K=K*Kx*Ky*CHout*((CHin+Tc-1)/Tc)+entries_per_line*Hin+entries_per_line*overlap*(K-1);
+		total_bw_K_to_N=(entries_per_line*Hin+entries_per_line*overlap*(K-1))*N+Kx*Ky*CHout*math.floor((CHin+Tc-1)/Tc);
+		total_bw_N_to_K=K*Kx*Ky*CHout*math.floor((CHin+Tc-1)/Tc)+entries_per_line*Hin+entries_per_line*overlap*(K-1);
 
 		if((mininum_bw==0) or (total_bw_K_to_N<mininum_bw)):
 			best_dat_banks=dat_buf_num;
@@ -157,23 +157,23 @@ def Record_Conv_Cfg(Hin,Win,CHin,CHout,Kx,Ky,Sx,Sy,pad_left,pad_right,pad_up,pad
 
 	dat_buf_num=best_dat_banks;
 	wt_banks=Logic_MEM_NUM-dat_buf_num;
-	out_ch_slice=( (Logic_MEM_DEP*wt_banks)/(Kx*Ky*Tk*((CHin+Tc-1)/Tc)) ) *Tk;
+	out_ch_slice=math.floor( (Logic_MEM_DEP*wt_banks)/(Kx*Ky*Tk*math.floor((CHin+Tc-1)/Tc)) ) *Tk;
 
 	if(out_ch_slice>=CHout):
 		out_ch_slice=CHout;
 		N=1;
 	else:
-		N=(CHout+out_ch_slice-1)/out_ch_slice;
+		N=math.floor((CHout+out_ch_slice-1)/out_ch_slice);
 
 	if(CHout%out_ch_slice==0):
 		out_ch_slice_last=out_ch_slice;
 	else:
 		out_ch_slice_last=CHout%out_ch_slice;
 
-	out_height_first=((Logic_MEM_DEP*dat_buf_num)/entries_per_line+pad_up-Ky)/Sy+1;
+	out_height_first=math.floor((math.floor((Logic_MEM_DEP*dat_buf_num)/entries_per_line)+pad_up-Ky)/Sy)+1;
 	in_height_first=(out_height_first-1)*Sy+Ky-pad_up;
 
-	out_height_middle=((Logic_MEM_DEP*dat_buf_num)/entries_per_line-Ky)/Sy+1;
+	out_height_middle=math.floor((math.floor((Logic_MEM_DEP*dat_buf_num)/entries_per_line)-Ky)/Sy)+1;
 	in_height_middle=(out_height_middle-1)*Sy+Ky;
 
 	if(out_height_first>=out_height):
@@ -181,10 +181,10 @@ def Record_Conv_Cfg(Hin,Win,CHin,CHout,Kx,Ky,Sx,Sy,pad_left,pad_right,pad_up,pad
 		in_height_first=Hin;
 
 	if((out_height-out_height_first)%out_height_middle == 0):
-		K=(out_height-out_height_first)/out_height_middle+1;
+		K=math.floor((out_height-out_height_first)/out_height_middle)+1;
 		out_height_last=out_height_middle;
 	else:
-		K=(out_height-out_height_first)/out_height_middle+2;
+		K=math.floor((out_height-out_height_first)/out_height_middle)+2;
 		out_height_last=(out_height-out_height_first)%out_height_middle;
 
 	in_height_last=Hin-in_height_first+overlap-(K-2)*(in_height_first-overlap);
@@ -194,7 +194,7 @@ def Record_Conv_Cfg(Hin,Win,CHin,CHout,Kx,Ky,Sx,Sy,pad_left,pad_right,pad_up,pad
 	overlap,Kx,Ky,Sx,Sy,pad_left,pad_up,
 	best_dat_banks,best_method,
 	out_width,out_height,
-	entries_per_line,(Tc*2*Kx*Ky*CHout*((CHin+Tc-1)/Tc)),
+	entries_per_line,(Tc*2*Kx*Ky*CHout*math.floor((CHin+Tc-1)/Tc)),
 	K,
 	in_height_first,in_height_middle,in_height_last,
 	out_height_first,out_height_middle,out_height_last,
