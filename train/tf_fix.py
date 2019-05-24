@@ -78,7 +78,7 @@ def Record_Weight(tensor,name,file):
 	print("Load_Weight_From_File(%s,\"%s\");\n" % (name,name+'.bin') );
 	with open('./record/'+name+'.bin', 'wb') as fp:
 		for i in range(OneD_array_size):
-			a=struct.pack('h',OneD_array[i])
+			a=struct.pack('h',int(OneD_array[i]))
 			fp.write(a)
 
 def Record_Bias(tensor,name,file):
@@ -92,7 +92,7 @@ def Record_Bias(tensor,name,file):
 	print("Load_Feature_From_File(%s,\"%s\");\n" % (name,name+'.bin') );
 	with open('./record/'+name+'.bin', 'wb') as fp:
 		for i in range(OneD_array_size):
-			a=struct.pack('h',OneD_array[i])
+			a=struct.pack('h',int(OneD_array[i]))
 			fp.write(a)
 
 def Record_Conv_Cfg(Hin,Win,CHin,CHout,Kx,Ky,Sx,Sy,pad_left,pad_right,pad_up,pad_down,layername,file):
