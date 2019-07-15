@@ -187,7 +187,7 @@ def Record_Conv_Cfg(Hin,Win,CHin,CHout,Kx,Ky,Sx,Sy,pad_left,pad_right,pad_up,pad
 		K=math.floor((out_height-out_height_first)/out_height_middle)+2;
 		out_height_last=(out_height-out_height_first)%out_height_middle;
 
-	in_height_last=Hin-in_height_first+overlap-(K-2)*(in_height_first-overlap);
+	in_height_last=Hin-in_height_first+overlap-(K-2)*(in_height_middle-overlap);
 
 	file.write("struct Conv_Cfg %s={%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d};\n" % (layername+"_cfg",
 	CHin,Win,CHout,
